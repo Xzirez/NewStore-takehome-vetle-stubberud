@@ -1,0 +1,7 @@
+{"go.gopath": "/usr/local/go/bin/go", 
+"go.goroot": "/usr/local/go/bin/go",
+"go.vetOnSave": "package",
+"go.lintOnSave": "package",
+"go.testOnSave": true,
+"go.buildOnSave": "package",
+"go.coverOnSave": true }
