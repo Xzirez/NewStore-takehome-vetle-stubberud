@@ -1,13 +1,15 @@
 import styled from "@emotion/styled";
 import React from "react";
 import { Todo } from "../Todo/Entities";
+import { useTodoStore } from "../Todo/Store";
 
 const CardContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 16px;
-  height: 200px;
+  height: 300px;
+  width: 150px;
   border: 1px solid #ccc;
   border-radius: 4px;
   background-color: #fff;
@@ -15,14 +17,6 @@ const CardContainer = styled.div`
   box-shadow: 2px 2px 4px 0px rgba(0, 0, 0, 0.2);
   position: relative;
 `;
-
-const CardImage = styled.img`
-  width: 100%;
-  max-width: 200px;
-  margin-bottom: 16px;
-  border-radius: 4px 4px 0 0;
-`;
-
 const CardTitle = styled.h3`
   margin: 0;
   font-size: 1.25em;
@@ -47,10 +41,9 @@ const CardDescription = styled.p`
 `;
 
 const Button = styled.button`
-  position: absolute;
-  bottom: 16px;
-  left: 50%;
-  transform: translateX(-50%);
+  height: 50px;
+  width: 90px;
+  margin: 10px;
   padding: 8px 16px;
   border: 1px solid #000;
   border-radius: 4px;
@@ -65,15 +58,28 @@ const TodoCard = ({
   description,
   completed,
   createdAt,
-}: Todo): JSX.Element => (
-  <CardContainer>
-    <CardImage src={""} alt={""} />
-    <CardTitle>{name}</CardTitle>
-    <CardDescription>{description}</CardDescription>
-    <CardPrice>{createdAt.toLocaleString()}</CardPrice>
-    <CardPrice>Completed: {completed ? "Yes" : "No"}</CardPrice>
-    <Button>Complete Task</Button>
-  </CardContainer>
-);
+  id,
+}: Todo): JSX.Element => {
+  const { updateTodo, removeTodo, prioritizeTodo } = useTodoStore();
+  return (
+    <CardContainer>
+      <CardTitle>{name}</CardTitle>
+      <CardDescription>{description}</CardDescription>
+      <CardPrice>{createdAt.toLocaleString()}</CardPrice>
+      <CardPrice>Completed: {completed ? "Yes" : "No"}</CardPrice>
+      {completed ? (
+        <Button onClick={() => updateTodo({ id, completed: false })}>
+          Undo
+        </Button>
+      ) : (
+        <Button onClick={() => updateTodo({ id, completed: true })}>
+          Complete Task
+        </Button>
+      )}
+      <Button onClick={() => removeTodo(id)}>Remove Task</Button>
+      <Button onClick={() => prioritizeTodo(id)}>Prioritize</Button>
+    </CardContainer>
+  );
+};
 
 export default TodoCard;

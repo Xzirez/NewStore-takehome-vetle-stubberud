@@ -1,18 +1,7 @@
 import styled from "@emotion/styled";
 import React, { useEffect } from "react";
-import TodoCard from "../components/ProductCard";
+import TodoCard from "../components/TodoCard";
 import { useTodoStore } from "../Todo/Store";
-
-/*
- 1. Display current day
- 2. Display progress
- 3. Display starting weight
- 4. Display Times a week
-
- Nice to have:
- - AI
- - Optional progress reports
-*/
 
 const Container = styled.div`
   display: grid;
@@ -22,12 +11,17 @@ const Container = styled.div`
 `;
 
 const TodoPage = (): JSX.Element => {
-  const { todos, getTodos } = useTodoStore();
-  console.log(todos);
-
+  const { todos, getTodos, createTodo } = useTodoStore();
   useEffect(() => getTodos(), [getTodos]);
   return (
     <Container>
+      <button
+        onClick={() =>
+          createTodo({ name: "newTodo", description: "I am a new todo" })
+        }
+      >
+        Create New Todo
+      </button>
       {todos.map((todo, index) => (
         <TodoCard key={index} {...todo} />
       ))}

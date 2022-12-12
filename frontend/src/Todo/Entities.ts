@@ -13,3 +13,8 @@ export interface UpdateTodoBody {
   completed?: boolean;
 }
 
+export interface CreateTodoBody {
+  name: string;
+  description: string;
+}
+

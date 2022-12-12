@@ -1,4 +1,4 @@
-import { Todo } from "./Entities";
+import { Todo, UpdateTodoBody } from "./Entities";
 
 enum HttpMethod {
   GET = "GET",
@@ -11,8 +11,9 @@ enum HttpMethod {
 interface TodoClient {
   getTodos(): Promise<Todo[]>;
   createTodo(todo: Todo): Promise<Todo>;
+  updateTodo(body: UpdateTodoBody): Promise<Todo>;
   /*   getProductById(productId: string): Promise<Product>;
-  updateProduct(body: UpdateProductBody): Promise<void>; */
+   */
 }
 
 class TodoClientImpl implements TodoClient {
@@ -80,6 +81,14 @@ class TodoClientImpl implements TodoClient {
 
   createTodo: TodoClient["createTodo"] = async () => {
     const resource = `${this.baseUrl}/todo`;
+    const response = await this.fetch<Todo>(
+      HttpMethod.POST,
+      resource
+    );
+    return response;
+  };
+  updateTodo: TodoClient["updateTodo"] = async (body: UpdateTodoBody) => {
+    const resource = `${this.baseUrl}/updateTodo/${body.id}`;
     const response = await this.fetch<Todo>(
       HttpMethod.POST,
       resource
