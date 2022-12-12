@@ -15,16 +15,15 @@ var (
 	ErrorFailedToUnmarshalRecord = "failed to unmarshal record"
 	ErrorFailedToFetchRecord     = "failed to fetch record"
 	ErrorInvalidTodoData         = "invalid todo data"
-	ErrorInvalidEmail            = "invalid email"
 	ErrorCouldNotMarshalItem     = "could not marshal item"
 	ErrorCouldNotDeleteItem      = "could not delete item"
 	ErrorCouldNotDynamoPutItem   = "could not dynamo put item"
-	ErrorUserAlreadyExists       = "user.User already exists"
-	ErrorUserDoesNotExist        = "user.User does not exist"
+	ErrorTodoAlreadyExists       = "user.User already exists"
+	ErrorTodoDoesNotExist        = "user.User does not exist"
 )
 
 type Todo struct {
-	TodoId      string `json:"todoId"`
+	Id          string `json:"id"`
 	Name        string `json:"name"`
 	Description string `json:"description"`
 	Completed   bool   `json:"completed"`
@@ -64,7 +63,7 @@ func CreateTodo(req events.APIGatewayProxyRequest, tableName string, dynaClient 
 	_, err = dynaClient.PutItem(input)
 
 	if err != nil {
-		return nil, errors.New(ErrorCouldNotDynamoPutItem)
+		return nil, err
 	}
 
 	return &todo, nil
@@ -88,7 +87,7 @@ func FetchTodo(id, tableName string, dynaClient dynamodbiface.DynamoDBAPI) (*Tod
 
 	input := &dynamodb.GetItemInput{
 		Key: map[string]*dynamodb.AttributeValue{
-			"todoID": {
+			"id": {
 				S: aws.String(id),
 			},
 		},
@@ -106,4 +105,54 @@ func FetchTodo(id, tableName string, dynaClient dynamodbiface.DynamoDBAPI) (*Tod
 		return nil, errors.New(ErrorFailedToUnmarshalRecord)
 	}
 	return item, nil
+}
+
+func UpdateTodo(req events.APIGatewayProxyRequest, tableName string, dynaClient dynamodbiface.DynamoDBAPI) (
+	*Todo,
+	error,
+) {
+	var todo Todo
+	if err := json.Unmarshal([]byte(req.Body), &todo); err != nil {
+		return nil, errors.New(ErrorInvalidTodoData)
+	}
+
+	currentUser, _ := FetchTodo(todo.Id, tableName, dynaClient)
+	if currentUser != nil {
+		return nil, errors.New(ErrorTodoDoesNotExist)
+	}
+
+	av, err := dynamodbattribute.MarshalMap(todo)
+	if err != nil {
+		return nil, errors.New(ErrorCouldNotMarshalItem)
+	}
+
+	input := &dynamodb.PutItemInput{
+		Item:      av,
+		TableName: aws.String(tableName),
+	}
+
+	_, err = dynaClient.PutItem(input)
+	if err != nil {
+		return nil, errors.New(ErrorCouldNotDynamoPutItem)
+	}
+	return &todo, nil
+}
+
+func DeleteTodo(req events.APIGatewayProxyRequest, tableName string, dynaClient dynamodbiface.DynamoDBAPI) error {
+
+	id := req.QueryStringParameters["id"]
+	input := &dynamodb.DeleteItemInput{
+		Key: map[string]*dynamodb.AttributeValue{
+			"id": {
+				S: aws.String(id),
+			},
+		},
+		TableName: aws.String(tableName),
+	}
+	_, err := dynaClient.DeleteItem(input)
+	if err != nil {
+		return errors.New(ErrorCouldNotDeleteItem)
+	}
+
+	return nil
 }
