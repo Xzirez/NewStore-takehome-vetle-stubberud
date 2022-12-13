@@ -5,7 +5,7 @@ org: xzirez
 
 # You can pin your service to only deploy with a specific Serverless version
 # Check out our docs for more details
-frameworkVersion: '3'
+frameworkVersion: "3"
 
 provider:
   name: aws
@@ -25,7 +25,7 @@ provider:
 
 package:
   patterns:
-    - '!./**'
+    - "!./**"
     - ./bin/**
 
 functions:
@@ -41,15 +41,15 @@ functions:
       - httpApi:
           path: /todo
           method: get
-  updateTodo: 
-      handler: bin/functions/updateTodo/main
-      events:
+  updateTodo:
+    handler: bin/functions/updateTodo/main
+    events:
       - httpApi:
           path: /updateTodo
           method: put
-  deleteTodo: 
-      handler: bin/functions/deleteTodo/main
-      events:
+  deleteTodo:
+    handler: bin/functions/deleteTodo/main
+    events:
       - httpApi:
           path: /deleteTodo
           method: delete

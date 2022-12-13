@@ -68,7 +68,7 @@ export const useTodoStore = create<TodoState>((set) => ({
             }
           });
         }
-        return { ...state, todos: state.todos, loading: false };
+        return { ...state, todos: state.todos, error: error, loading: false };
       });
     }
   },
@@ -117,7 +117,7 @@ export const useTodoStore = create<TodoState>((set) => ({
       set((state) => {
         const tempIndex = state.todos.findIndex((todo) => todo.id === "temp");
         state.todos.splice(tempIndex, 1);
-        return { ...state, todos: state.todos, loading: false };
+        return { ...state, todos: state.todos, error: error, loading: false };
       });
     }
   },
