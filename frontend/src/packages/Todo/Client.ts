@@ -1,4 +1,4 @@
-import { Todo, UpdateTodoBody } from "./Entities";
+import { CreateTodoBody, Todo, UpdateTodoBody } from "./Entities";
 
 enum HttpMethod {
   GET = "GET",
@@ -10,10 +10,9 @@ enum HttpMethod {
 
 interface TodoClient {
   getTodos(): Promise<Todo[]>;
-  createTodo(todo: Todo): Promise<Todo>;
+  createTodo(todo: CreateTodoBody): Promise<Todo>;
   updateTodo(body: UpdateTodoBody): Promise<Todo>;
-  /*   getProductById(productId: string): Promise<Product>;
-   */
+  deleteTodo(id: string): void;
 }
 
 class TodoClientImpl implements TodoClient {
@@ -41,17 +40,6 @@ class TodoClientImpl implements TodoClient {
     }
 
     return body;
-
-    /*  function generateErrorMessage(errorType?: string) {
-      switch (errorType) {
-        case "meeting-not-found":
-          return "We're unable to find that meeting";
-        case "user-not-found":
-          return "We're unable to find that user in the meeting";
-        default:
-          return "An error has occurred, please try again later";
-      }
-    } */
   }
 
   private async fetch<T = Record<string, never>>(
@@ -72,28 +60,27 @@ class TodoClientImpl implements TodoClient {
 
   getTodos: TodoClient["getTodos"] = async () => {
     const resource = `${this.baseUrl}/todo`;
-    const response = await this.fetch<Todo[]>(
-      HttpMethod.GET,
-      resource
-    );
+    const response = await this.fetch<Todo[]>(HttpMethod.GET, resource);
     return response;
   };
 
-  createTodo: TodoClient["createTodo"] = async () => {
-    const resource = `${this.baseUrl}/todo`;
-    const response = await this.fetch<Todo>(
-      HttpMethod.POST,
-      resource
-    );
+  createTodo: TodoClient["createTodo"] = async (body: CreateTodoBody) => {
+    const resource = `${this.baseUrl}/createTodo`;
+    const response = await this.fetch<Todo>(HttpMethod.POST, resource, {
+      ...body,
+    });
     return response;
   };
   updateTodo: TodoClient["updateTodo"] = async (body: UpdateTodoBody) => {
-    const resource = `${this.baseUrl}/updateTodo/${body.id}`;
-    const response = await this.fetch<Todo>(
-      HttpMethod.POST,
-      resource
-    );
+    const resource = `${this.baseUrl}/updateTodo`;
+    const response = await this.fetch<Todo>(HttpMethod.PUT, resource, {
+      ...body,
+    });
     return response;
+  };
+  deleteTodo: TodoClient["deleteTodo"] = async (id: string) => {
+    const resource = `${this.baseUrl}/deleteTodo?id=${id}`;
+    await this.fetch<Todo>(HttpMethod.DELETE, resource);
   };
 }
 

@@ -14,7 +14,9 @@ export interface UpdateTodoBody {
 }
 
 export interface CreateTodoBody {
+  id?: string;
   name: string;
   description: string;
+  completed: boolean;
+  createdAt: Date;
 }
-

@@ -34,9 +34,7 @@ describe("TodoClient", () => {
 
     it("throws an error when the request fails", async () => {
       fetchMock.mockRejectOnce(new Error("fake error message"));
-      await expect(todoClient.getTodos()).rejects.toThrow(
-        "fake error message"
-      );
+      await expect(todoClient.getTodos()).rejects.toThrow("fake error message");
     });
 
     it("throws a default error message if no error type was returned", async () => {
@@ -52,16 +50,13 @@ describe("TodoClient", () => {
   });
 
   describe("TodoClient methods", () => {
-    describe("getProducts", () => {
+    describe("getTodos", () => {
       it("calls the correct resource and returns the correct value", async () => {
-        const response = { name: "product", description: "A Product" };
-        fetchMock.mockResponse(
-          JSON.stringify(response),
-          successInit
-        );
+        const response = [{ name: "todo", description: "A Todo" }];
+        fetchMock.mockResponse(JSON.stringify(response), successInit);
         const res = await todoClient.getTodos();
 
-        expect(fetchMock).toBeCalledWith("https://url.com/products", {
+        expect(fetchMock).toBeCalledWith("https://url.com/todo", {
           method: "GET",
           headers: defaultHeaders,
         });

@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import React from "react";
-import { Todo } from "../Todo/Entities";
-import { useTodoStore } from "../Todo/Store";
+import { Todo } from "../packages/Todo/Entities";
+import { useTodoStore } from "../packages/Todo/Store";
 
 const CardContainer = styled.div`
   display: flex;

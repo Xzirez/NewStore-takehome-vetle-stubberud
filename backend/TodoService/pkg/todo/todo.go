@@ -18,8 +18,8 @@ var (
 	ErrorCouldNotMarshalItem     = "could not marshal item"
 	ErrorCouldNotDeleteItem      = "could not delete item"
 	ErrorCouldNotDynamoPutItem   = "could not dynamo put item"
-	ErrorTodoAlreadyExists       = "user.User already exists"
-	ErrorTodoDoesNotExist        = "user.User does not exist"
+	ErrorTodoAlreadyExists       = "todo.Todo already exists"
+	ErrorTodoDoesNotExist        = "todo.Todo does not exist"
 )
 
 type Todo struct {
@@ -116,8 +116,8 @@ func UpdateTodo(req events.APIGatewayProxyRequest, tableName string, dynaClient 
 		return nil, errors.New(ErrorInvalidTodoData)
 	}
 
-	currentUser, _ := FetchTodo(todo.Id, tableName, dynaClient)
-	if currentUser != nil {
+	currentTodo, _ := FetchTodo(todo.Id, tableName, dynaClient)
+	if currentTodo == nil {
 		return nil, errors.New(ErrorTodoDoesNotExist)
 	}
 
@@ -133,7 +133,7 @@ func UpdateTodo(req events.APIGatewayProxyRequest, tableName string, dynaClient 
 
 	_, err = dynaClient.PutItem(input)
 	if err != nil {
-		return nil, errors.New(ErrorCouldNotDynamoPutItem)
+		return nil, err
 	}
 	return &todo, nil
 }

@@ -45,7 +45,7 @@ functions:
       handler: bin/functions/updateTodo/main
       events:
       - httpApi:
-          path: /updateTodo/
+          path: /updateTodo
           method: put
   deleteTodo: 
       handler: bin/functions/deleteTodo/main

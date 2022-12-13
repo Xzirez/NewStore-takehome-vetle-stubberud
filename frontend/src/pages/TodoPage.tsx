@@ -1,7 +1,8 @@
 import styled from "@emotion/styled";
 import React, { useEffect } from "react";
 import TodoCard from "../components/TodoCard";
-import { useTodoStore } from "../Todo/Store";
+import { useTodoStore } from "../packages/Todo/Store";
+import { v4 } from "uuid";
 
 const Container = styled.div`
   display: grid;
@@ -17,7 +18,13 @@ const TodoPage = (): JSX.Element => {
     <Container>
       <button
         onClick={() =>
-          createTodo({ name: "newTodo", description: "I am a new todo" })
+          createTodo({
+            id: v4(),
+            name: "newTodo",
+            description: "I am a new todo",
+            completed: false,
+            createdAt: new Date(),
+          })
         }
       >
         Create New Todo
